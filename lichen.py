@@ -45,19 +45,14 @@ def update(frame):
         # "rotate the bits of esi right once"
         # "if si < 0xFA00, return... else call pRNG(esi)"
 
-        while True:
-            # integer add with 32-bit wrap
-            esi = (esi + MAGIC_CONST) & 0xFFFFFFFF
+        # integer add with 32-bit wrap
+        esi = (esi + MAGIC_CONST) & 0xFFFFFFFF
 
-            # ROR 1 (Rotate Right 1 bit)
-            esi = ((esi >> 1) | (esi << 31)) & 0xFFFFFFFF
+        # ROR 1 (Rotate Right 1 bit)
+        esi = ((esi >> 1) | (esi << 31)) & 0xFFFFFFFF
 
-            # "si" is the lower 16 bits
-            idx = esi & 0xFFFF
-
-            # If valid pixel index, break loop. If not (overflow), generate again.
-            if idx < TOTAL_PIXELS:
-                break
+        # Use full 32 bits for indexing to support larger resolutions
+        idx = esi % TOTAL_PIXELS
 
         px = image_buffer[idx]
         if px == 0:
