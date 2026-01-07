@@ -5,3 +5,5 @@ A macOS screensaver based on the MS-DOS virus
 [ScreenSaverKit](https://github.com/fuzzywalrus/ScreenSaverKit) and a Metal kernel for
 GPU acceleration, allowing for extremely low power consumption while the screensaver
 plays.
+
+![lichen](static/lichen_2x_2x_20fps_opt.gif)
