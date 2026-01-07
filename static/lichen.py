@@ -1,24 +1,22 @@
 import numpy as np
 from PIL import Image, ImageOps
+from tqdm import tqdm
 
-# --- Configuration ---
-# WIDTH = 768
-# HEIGHT = 480
-WIDTH = 320
-HEIGHT = 200
+# Twice the default resolution -- changes the appearence, but is nice to have
+WIDTH = 640
+HEIGHT = 400
 TOTAL_PIXELS = WIDTH * HEIGHT
+SCALE = 2
 FPS = 20
-STEPS_PER_FRAME = 16000
-# STEPS_PER_FRAME = 64000
+# STEPS_PER_FRAME = 8000
+STEPS_PER_FRAME = 32000
 
 MAX_BRIGHTNESS = 0x1E  # 30 (The 'spore' brightness)
 SPREAD_THRESHOLD = 0x17  # 23 (Minimum brightness to spread)
-MAGIC_CONST = 0x5A6A6D6C  # The virus LCG constant
+MAGIC_CONST = 0x5A6A6D6C  # LCG constant
 
-# 1D Linear Memory (mimics VGA Segment A000)
 image_buffer = np.zeros(TOTAL_PIXELS, dtype=np.uint8)
 
-# Initial Seed specified in the analysis
 esi = 0x00000361
 
 # Place the initial spore at center
@@ -26,24 +24,17 @@ center_idx = (HEIGHT // 2) * WIDTH + (WIDTH // 2)
 image_buffer[center_idx] = MAX_BRIGHTNESS
 
 frames = []
-total_frames = FPS * 60  # 30 seconds at FPS
+total_frames = FPS * 60  # 60 seconds at FPS
 
-print("Generating frames...")
-for frame_num in range(total_frames):
-    print(f"frame {frame_num + 1}/{total_frames}")
+for frame_num in tqdm(range(total_frames)):
     for _ in range(STEPS_PER_FRAME):
-        # "esi += 0x5A6A6D6C"
-        # "rotate the bits of esi right once"
-        # "if si < 0xFA00, return... else call pRNG(esi)"
         idx = 999999999
         while idx >= TOTAL_PIXELS:
-            # integer add with 32-bit wrap
             esi = (esi + MAGIC_CONST) & 0xFFFFFFFF
 
-            # ROR 1 (Rotate Right 1 bit)
             esi = ((esi >> 1) | (esi << 31)) & 0xFFFFFFFF
 
-            idx = esi & 0xFFFF
+            idx = esi & 0x000FFFFF
 
         px = image_buffer[idx]
         if px == 0:
@@ -66,19 +57,15 @@ for frame_num in range(total_frames):
                 #     image_buffer[n_idx % TOTAL_PIXELS] or MAX_BRIGHTNESS
                 # )
 
-    # bitmapData[i] = val ? (uint8_t)((val * 255) / kMaxBrightness) : 0;
-    # scaled = (image_buffer * 255 / MAX_BRIGHTNESS).astype(np.uint8)
-    print(image_buffer.min(), image_buffer.max())
     frame_array = np.where(image_buffer > 0, image_buffer * 8, 0).reshape(HEIGHT, WIDTH)
-    frames.append(ImageOps.invert(Image.fromarray(frame_array, mode="L")))
+    im = np.kron(frame_array, np.ones((SCALE, SCALE), dtype=np.uint8))
+    frames.append(ImageOps.invert(Image.fromarray(im, mode="L")))
 
-print(f"Saving GIF...")
 frames[0].save(
-    f"lichen_320x200_30sec_{FPS}fps.gif",
+    f"lichen_2x_{SCALE}x_{FPS}fps_opt.gif",
     save_all=True,
     append_images=frames[1:],
     duration=1000 // FPS,
     loop=0,
-    optimize=False,
+    optimize=True,
 )
-print("Saved to lichen_320x200_30sec_20fps.gif")
