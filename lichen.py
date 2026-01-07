@@ -1,16 +1,15 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from PIL import Image
 
 # --- Configuration ---
-WIDTH = 768
-HEIGHT = 480
-# WIDTH = 320
-# HEIGHT = 200
+# WIDTH = 768
+# HEIGHT = 480
+WIDTH = 320
+HEIGHT = 200
 TOTAL_PIXELS = WIDTH * HEIGHT
-FPS = 60
+FPS = 20
 STEPS_PER_FRAME = 4000
-STEPS_PER_FRAME = 64000
+# STEPS_PER_FRAME = 64000
 
 MAX_BRIGHTNESS = 0x1E  # 30 (The 'spore' brightness)
 SPREAD_THRESHOLD = 0x17  # 23 (Minimum brightness to spread)
@@ -26,20 +25,12 @@ esi = 0x00000361
 center_idx = (HEIGHT // 2) * WIDTH + (WIDTH // 2)
 image_buffer[center_idx] = MAX_BRIGHTNESS
 
-fig, ax = plt.subplots(figsize=(10, 6), facecolor="black")
+frames = []
+total_frames = FPS * 30  # 30 seconds at FPS
 
-im = ax.imshow(
-    image_buffer.reshape(HEIGHT, WIDTH),
-    cmap="gray",
-    vmin=0,
-    vmax=MAX_BRIGHTNESS,
-    interpolation=None,
-)
-ax.set_axis_off()
-
-
-def update(frame):
-    global esi
+print("Generating frames...")
+for frame_num in range(total_frames):
+    print(f"frame {frame_num + 1}/{total_frames}")
     for _ in range(STEPS_PER_FRAME):
         # "esi += 0x5A6A6D6C"
         # "rotate the bits of esi right once"
@@ -75,19 +66,19 @@ def update(frame):
                 #     image_buffer[n_idx % TOTAL_PIXELS] or MAX_BRIGHTNESS
                 # )
 
-    # Update visual
-    im.set_array(image_buffer.reshape(HEIGHT, WIDTH))
-    
-    return [im]
+    # Create frame: 0 (inactive) -> white (255), MAX_BRIGHTNESS -> black (0)
+    # Matches: val ? (val * 255 / kMaxBrightness) : 0, but inverted
+    scaled = (image_buffer * 255 / MAX_BRIGHTNESS).astype(np.uint8)
+    frame_array = np.where(image_buffer > 0, 255 - scaled, 255).reshape(HEIGHT, WIDTH)
+    frames.append(Image.fromarray(frame_array, mode='L'))
 
-
-ani = FuncAnimation(
-    fig,
-    update,
-    frames=None,
-    interval=1000 / 60,
-    blit=True,
-    cache_frame_data=False
+print(f"Saving GIF...")
+frames[0].save(
+    f"lichen_320x200_30sec_{FPS}fps.gif",
+    save_all=True,
+    append_images=frames[1:],
+    duration=1000 // FPS,
+    loop=0,
+    optimize=True
 )
-
-plt.show()
+print("Saved to lichen_320x200_30sec_20fps.gif")
