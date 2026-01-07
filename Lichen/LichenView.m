@@ -1,16 +1,14 @@
 #import "LichenView.h"
-
 #import <AppKit/AppKit.h>
-
 #import "ScreenSaverKit/SSKDiagnostics.h"
 
 static const NSInteger kWidth            = 320;
 static const NSInteger kHeight           = 200;
 static const NSInteger kTotalPixels      = kWidth * kHeight;
-static const uint8_t  kMaxBrightness     = 0x1E;
-static const uint8_t  kSpreadThreshold   = 0x17;
-static const uint32_t lcgConst        = 0x5A6A6D6C;
-static const uint32_t lcgSeed       = 0x00000361;
+static const uint8_t   kMaxBrightness    = 0x1E;
+static const uint8_t   kSpreadThreshold  = 0x17;
+static const uint32_t  lcgConst          = 0x5A6A6D6C;
+static const uint32_t  lcgSeed           = 0x00000361;
 
 @interface LichenView ()
 @property (nonatomic) uint8_t *imageBuffer;
@@ -55,7 +53,7 @@ static const uint32_t lcgSeed       = 0x00000361;
     free(self.imageBuffer);
 }
 
-- (BOOL)isOpaque { return YES; }
+- (bool)isOpaque { return true; }
 
 - (void)animateOneFrame {
     NSTimeInterval dt = [self advanceAnimationClock];
@@ -147,11 +145,10 @@ static const uint32_t lcgSeed       = 0x00000361;
     [[NSColor blackColor] setFill];
     NSRectFill(dirtyRect);
 
-    if (!self.renderedImage) {
-        return;
-    }
+    if (!self.renderedImage) { return; }
 
-    // Fill entire screen (stretch to fit)
+    // Fill entire screen (stretch to fit).
+    // Handles the extra pixels on mac devices with a notch
     NSRect destRect = self.bounds;
 
     // Draw with nearest-neighbor interpolation (no smoothing)
