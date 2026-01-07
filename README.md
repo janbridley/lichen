@@ -7,3 +7,12 @@ GPU acceleration, allowing for extremely low power consumption while the screens
 plays.
 
 ![lichen](static/lichen_2x_2x_20fps_opt.gif)
+
+## Developer Instructions
+
+```bash
+# Build and open the image. May require sudo to install to /Library/Screen\ Savers
+../ScreenSaverKit/scripts/install-and-refresh.sh . && open -a ScreenSaverEngine
+```
+
+### Performance
