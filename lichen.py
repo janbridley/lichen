@@ -66,11 +66,13 @@ for frame_num in range(total_frames):
                 #     image_buffer[n_idx % TOTAL_PIXELS] or MAX_BRIGHTNESS
                 # )
 
-    # Create frame: 0 (inactive) -> white (255), MAX_BRIGHTNESS -> black (0)
-    # Matches: val ? (val * 255 / kMaxBrightness) : 0, but inverted
-    scaled = (image_buffer * 255 / MAX_BRIGHTNESS).astype(np.uint8)
-    frame_array = np.where(image_buffer > 0, 255 - scaled, 255).reshape(HEIGHT, WIDTH)
-    frames.append(Image.fromarray(frame_array, mode='L'))
+    # bitmapData[i] = val ? (uint8_t)((val * 255) / kMaxBrightness) : 0;
+    # scaled = (image_buffer * 255 / MAX_BRIGHTNESS).astype(np.uint8)
+    print(image_buffer.min(), image_buffer.max())
+    frame_array = np.where(image_buffer > 0, image_buffer * 255, 0).reshape(
+        HEIGHT, WIDTH
+    )
+    frames.append(Image.fromarray(frame_array, mode="L"))
 
 print(f"Saving GIF...")
 frames[0].save(
@@ -79,6 +81,6 @@ frames[0].save(
     append_images=frames[1:],
     duration=1000 // FPS,
     loop=0,
-    optimize=True
+    optimize=False,
 )
 print("Saved to lichen_320x200_30sec_20fps.gif")
