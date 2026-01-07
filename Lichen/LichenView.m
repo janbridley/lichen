@@ -53,7 +53,7 @@ static const uint32_t  lcgSeed           = 0x00000361;
     free(self.imageBuffer);
 }
 
-- (bool)isOpaque { return true; }
+- (BOOL)isOpaque { return YES; }
 
 - (void)animateOneFrame {
     NSTimeInterval dt = [self advanceAnimationClock];
