@@ -71,7 +71,7 @@ static const uint32_t lcgSeed       = 0x00000361;
 }
 
 - (void)processOneStep {
-    // Generate a valid pixel index using a LCG
+    // Generate a valid pixel index using an LCG
     NSInteger idx;
     do {
         self.esi = (self.esi + lcgConst) & 0xFFFFFFFF;
