@@ -16,9 +16,9 @@ cd Lichen && make clean all
 ```
 
 This produces a universal (arm64 + x86_64) bundle at `Lichen/Build/Lichen.saver`,
-including `thumbnail.png` and `thumbnail@2x.png` in the bundle's Resources. Note that,
-[as of recently](https://developer.apple.com/forums/thread/806641), these thumbnail
-files do not change how the screensaver displays in system settings.
+including `Lichen.icns` in the bundle's Resources. The icon is generated from
+`thumbnail.bmp` via `sips` and `iconutil`, and referenced by `CFBundleIconFile` in
+`Info.plist`.
 
 ## Bump version
 
