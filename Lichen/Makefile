@@ -3,7 +3,7 @@ KIT_DIR := $(abspath $(CURRENT_DIR)/..)
 KIT_SOURCE_DIR := $(KIT_DIR)/ScreenSaverKit/ScreenSaverKit
 
 SCREENSAVER_NAME ?= Lichen
-BUNDLE_ID ?= com.example.lichen
+BUNDLE_ID ?= com.janbridley.lichen
 PRINCIPAL_CLASS ?= LichenView
 BUILD_DIR ?= $(CURRENT_DIR)/Build
 
@@ -25,21 +25,18 @@ SOURCES := \
 	$(KIT_SOURCE_DIR)/SSKAssetManager.m \
 	$(KIT_SOURCE_DIR)/SSKAnimationClock.m \
 	$(KIT_SOURCE_DIR)/SSKEntityPool.m \
-	$(KIT_SOURCE_DIR)/SSKScreenUtilities.m \
-	$(KIT_SOURCE_DIR)/SSKDiagnostics.m \
-	$(KIT_SOURCE_DIR)/SSKPreferenceBinder.m \
-	$(KIT_SOURCE_DIR)/SSKConfigurationWindowController.m \
-	$(KIT_SOURCE_DIR)/SSKColorPalette.m \
-	$(KIT_SOURCE_DIR)/SSKPaletteManager.m \
-	$(KIT_SOURCE_DIR)/SSKColorUtilities.m \
-	$(KIT_SOURCE_DIR)/SSKParticleSystem.m
+	$(KIT_SOURCE_DIR)/SSKDiagnostics.m
+
+THUMBNAIL_BMP := $(CURRENT_DIR)/thumbnail.bmp
+ICONSET_DIR := $(BUILD_DIR)/Lichen.iconset
+ICON_ICNS := $(RESOURCES_DIR)/Lichen.icns
 
 INFO_PLIST := $(CURRENT_DIR)/Info.plist
 EXECUTABLE := $(MACOS_DIR)/$(SCREENSAVER_NAME)
 
 .PHONY: all clean install run bench
 
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) $(ICON_ICNS)
 
 $(EXECUTABLE): $(SOURCES) $(CONTENTS_DIR)/Info.plist | $(MACOS_DIR)
 	@mkdir -p $(MODULE_CACHE_DIR)
@@ -47,9 +44,27 @@ $(EXECUTABLE): $(SOURCES) $(CONTENTS_DIR)/Info.plist | $(MACOS_DIR)
 
 $(CONTENTS_DIR)/Info.plist: $(INFO_PLIST) | $(MACOS_DIR)
 	cp "$<" "$@"
-	/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $(SCREENSAVER_NAME)" "$@"
-	/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $(BUNDLE_ID)" "$@"
-	/usr/libexec/PlistBuddy -c "Set :NSPrincipalClass $(PRINCIPAL_CLASS)" "$@"
+
+SQUARE_PNG := $(BUILD_DIR)/thumbnail_square.png
+
+$(SQUARE_PNG): $(THUMBNAIL_BMP) | $(MACOS_DIR)
+	sips -s format png -c 800 800 "$(THUMBNAIL_BMP)" --out "$@" >/dev/null
+
+$(ICONSET_DIR): $(SQUARE_PNG) | $(MACOS_DIR)
+	@mkdir -p "$@"
+	sips -z 16 16 "$<" --out "$@/icon_16x16.png" >/dev/null
+	sips -z 32 32 "$<" --out "$@/icon_16x16@2x.png" >/dev/null
+	sips -z 32 32 "$<" --out "$@/icon_32x32.png" >/dev/null
+	sips -z 64 64 "$<" --out "$@/icon_32x32@2x.png" >/dev/null
+	sips -z 128 128 "$<" --out "$@/icon_128x128.png" >/dev/null
+	sips -z 256 256 "$<" --out "$@/icon_128x128@2x.png" >/dev/null
+	sips -z 256 256 "$<" --out "$@/icon_256x256.png" >/dev/null
+	sips -z 512 512 "$<" --out "$@/icon_256x256@2x.png" >/dev/null
+	sips -z 512 512 "$<" --out "$@/icon_512x512.png" >/dev/null
+	sips -z 1024 1024 "$<" --out "$@/icon_512x512@2x.png" >/dev/null
+
+$(ICON_ICNS): $(ICONSET_DIR)
+	iconutil -c icns "$<" -o "$@"
 
 $(MACOS_DIR):
 	@mkdir -p $(MACOS_DIR)

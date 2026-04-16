@@ -1,1 +1,3 @@
-ScreenSaverKit
+.venv
+.DS_Store
+*/build*

@@ -7,17 +7,19 @@
     <key>CFBundleExecutable</key>
     <string>Lichen</string>
     <key>CFBundleIdentifier</key>
-    <string>com.example.lichen</string>
+    <string>com.janbridley.lichen</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>dos.Lichen</string>
+    <string>Lichen</string>
+    <key>CFBundleIconFile</key>
+    <string>Lichen</string>
     <key>CFBundlePackageType</key>
     <string>BNDL</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1</string>
+    <string>1.0.0</string>
     <key>CFBundleVersion</key>
-    <string>0.1</string>
+    <string>1.0.0</string>
     <key>NSPrincipalClass</key>
     <string>LichenView</string>
 </dict>
