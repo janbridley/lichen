@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>Lichen</string>
     <key>CFBundleIdentifier</key>
-    <string>com.example.lichen</string>
+    <string>com.janbridley.lichen</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>

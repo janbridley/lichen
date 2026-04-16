@@ -3,7 +3,7 @@ KIT_DIR := $(abspath $(CURRENT_DIR)/..)
 KIT_SOURCE_DIR := $(KIT_DIR)/ScreenSaverKit/ScreenSaverKit
 
 SCREENSAVER_NAME ?= Lichen
-BUNDLE_ID ?= com.example.lichen
+BUNDLE_ID ?= com.janbridley.lichen
 PRINCIPAL_CLASS ?= LichenView
 BUILD_DIR ?= $(CURRENT_DIR)/Build
 
