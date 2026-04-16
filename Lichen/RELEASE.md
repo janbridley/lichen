@@ -30,13 +30,13 @@ Update `CFBundleShortVersionString` and `CFBundleVersion` in `Info.plist`.
 codesign --force --timestamp --options runtime \
   --identifier com.janbridley.lichen \
   --sign "Developer ID Application: NAME (TEAMID)" \
-  Lichen/Build/Lichen.saver
+  Build/Lichen.saver
 ```
 
 Verify:
 
 ```bash
-codesign --verify --strict --verbose=2 Lichen/Build/Lichen.saver
+codesign --verify --strict --verbose=2 Build/Lichen.saver
 ```
 
 ## Notarize
@@ -45,7 +45,7 @@ codesign --verify --strict --verbose=2 Lichen/Build/Lichen.saver
 ditto -c -k --keepParent Lichen/Build/Lichen.saver Lichen/Build/Lichen.saver.zip
 
 xcrun notarytool submit Lichen/Build/Lichen.saver.zip \
-  --keychain-profile your-notary-profile --wait
+  --keychain-profile lichen-notary --wait
 ```
 
 ## Distribute
