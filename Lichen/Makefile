@@ -34,12 +34,16 @@ SOURCES := \
 	$(KIT_SOURCE_DIR)/SSKColorUtilities.m \
 	$(KIT_SOURCE_DIR)/SSKParticleSystem.m
 
+THUMBNAIL_BMP := $(CURRENT_DIR)/thumbnail.bmp
+THUMBNAIL_PNG := $(RESOURCES_DIR)/thumbnail.png
+THUMBNAIL_PNG_2X := $(RESOURCES_DIR)/thumbnail@2x.png
+
 INFO_PLIST := $(CURRENT_DIR)/Info.plist
 EXECUTABLE := $(MACOS_DIR)/$(SCREENSAVER_NAME)
 
 .PHONY: all clean install run bench
 
-all: $(EXECUTABLE)
+all: $(EXECUTABLE) $(THUMBNAIL_PNG) $(THUMBNAIL_PNG_2X)
 
 $(EXECUTABLE): $(SOURCES) $(CONTENTS_DIR)/Info.plist | $(MACOS_DIR)
 	@mkdir -p $(MODULE_CACHE_DIR)
@@ -50,6 +54,12 @@ $(CONTENTS_DIR)/Info.plist: $(INFO_PLIST) | $(MACOS_DIR)
 	/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $(SCREENSAVER_NAME)" "$@"
 	/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $(BUNDLE_ID)" "$@"
 	/usr/libexec/PlistBuddy -c "Set :NSPrincipalClass $(PRINCIPAL_CLASS)" "$@"
+
+$(THUMBNAIL_PNG): $(THUMBNAIL_BMP) | $(MACOS_DIR)
+	sips -s format png -z 180 288 "$<" --out "$@" >/dev/null
+
+$(THUMBNAIL_PNG_2X): $(THUMBNAIL_BMP) | $(MACOS_DIR)
+	sips -s format png -z 360 576 "$<" --out "$@" >/dev/null
 
 $(MACOS_DIR):
 	@mkdir -p $(MACOS_DIR)
