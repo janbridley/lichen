@@ -48,6 +48,7 @@ while idx >= TOTAL_PIXELS:
 ## Developer Instructions
 
 ```bash
+cd Lichen
 # Build and open the image. May require sudo to install to /Library/Screen\ Savers
 ../ScreenSaverKit/scripts/install-and-refresh.sh . && open -a ScreenSaverEngine
 ```
