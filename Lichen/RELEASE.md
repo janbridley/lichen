@@ -42,9 +42,9 @@ codesign --verify --strict --verbose=2 Build/Lichen.saver
 ## Notarize
 
 ```bash
-ditto -c -k --keepParent Lichen/Build/Lichen.saver Lichen/Build/Lichen.saver.zip
+ditto -c -k --keepParent Build/Lichen.saver Build/Lichen.saver.zip
 
-xcrun notarytool submit Lichen/Build/Lichen.saver.zip \
+xcrun notarytool submit Build/Lichen.saver.zip \
   --keychain-profile lichen-notary --wait
 ```
 
