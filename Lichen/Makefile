@@ -44,9 +44,6 @@ $(EXECUTABLE): $(SOURCES) $(CONTENTS_DIR)/Info.plist | $(MACOS_DIR)
 
 $(CONTENTS_DIR)/Info.plist: $(INFO_PLIST) | $(MACOS_DIR)
 	cp "$<" "$@"
-	/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $(SCREENSAVER_NAME)" "$@"
-	/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $(BUNDLE_ID)" "$@"
-	/usr/libexec/PlistBuddy -c "Set :NSPrincipalClass $(PRINCIPAL_CLASS)" "$@"
 
 $(THUMBNAIL_PNG): $(THUMBNAIL_BMP) | $(MACOS_DIR)
 	sips -s format png -z 180 288 "$<" --out "$@" >/dev/null
