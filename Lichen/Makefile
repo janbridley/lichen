@@ -25,14 +25,7 @@ SOURCES := \
 	$(KIT_SOURCE_DIR)/SSKAssetManager.m \
 	$(KIT_SOURCE_DIR)/SSKAnimationClock.m \
 	$(KIT_SOURCE_DIR)/SSKEntityPool.m \
-	$(KIT_SOURCE_DIR)/SSKScreenUtilities.m \
-	$(KIT_SOURCE_DIR)/SSKDiagnostics.m \
-	$(KIT_SOURCE_DIR)/SSKPreferenceBinder.m \
-	$(KIT_SOURCE_DIR)/SSKConfigurationWindowController.m \
-	$(KIT_SOURCE_DIR)/SSKColorPalette.m \
-	$(KIT_SOURCE_DIR)/SSKPaletteManager.m \
-	$(KIT_SOURCE_DIR)/SSKColorUtilities.m \
-	$(KIT_SOURCE_DIR)/SSKParticleSystem.m
+	$(KIT_SOURCE_DIR)/SSKDiagnostics.m
 
 THUMBNAIL_BMP := $(CURRENT_DIR)/thumbnail.bmp
 THUMBNAIL_PNG := $(RESOURCES_DIR)/thumbnail.png
