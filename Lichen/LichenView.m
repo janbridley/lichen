@@ -27,8 +27,31 @@ static const uint32_t  lcgSeed           = 0x00000361;
         self.stepsPerFrame = 4000;
 
         [self initializeLichen];
+
+        // Layer-back the view so the 320x200 simulation buffer is upscaled to
+        // the display by the GPU compositor rather than in software via -drawRect
+        self.wantsLayer = YES;
     }
     return self;
+}
+
+- (BOOL)wantsUpdateLayer {
+    // Returning YES makes AppKit call -updateLayer instead of -drawRect to upscale
+    return YES;
+}
+
+- (void)updateLayer {
+    // Nearest-neighbour scaling to match the original low-res layout
+    if (self.layer.magnificationFilter != kCAFilterNearest) {
+        self.layer.magnificationFilter = kCAFilterNearest;
+        self.layer.contentsGravity = kCAGravityResize;
+    }
+
+    if (!self.bitmap) { return; }
+    CGImageRef cgImage = [self.bitmap CGImage];
+    if (cgImage) {
+        self.layer.contents = (__bridge id)cgImage;
+    }
 }
 
 - (void)initializeLichen {
