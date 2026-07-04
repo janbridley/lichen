@@ -1,4 +1,3 @@
-//
 //  LichenSaverView.swift
 //  LichenExtension
 //
@@ -11,7 +10,6 @@
 //  (SSENeedsAnimationTimer = false), and we attach/start it from
 //  viewDidMoveToWindow. We additionally re-attach from layout() in case the
 //  backing layer does not exist yet during viewDidMoveToWindow in the host.
-//
 
 import ScreenSaver
 import QuartzCore
