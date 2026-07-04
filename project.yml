@@ -1,0 +1,75 @@
+name: Lichen
+options:
+  bundleIdPrefix: com.janbridley
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+# Most boilerplate is vendored in-tree from
+# https://github.com/AerialScreensaver/AppexSaverMinimal
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_LANGUAGE: en
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.0"
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    ALWAYS_SEARCH_USER_PATHS: NO
+
+packages:
+  PaperSaver:
+    url: https://github.com/AerialScreensaver/PaperSaver.git
+    exactVersion: 0.2.0
+
+targets:
+  Lichen:
+    type: application
+    platform: macOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen
+        PRODUCT_NAME: Lichen
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/App/Lichen.entitlements
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+    sources:
+      - Sources/Lichen/LichenAnimator.swift
+      - Sources/App/LichenApp.swift
+      - Sources/App/ContentView.swift
+      - Sources/App/PluginManager.swift
+      - Sources/App/PreviewView.swift
+      - Sources/App/PreviewViewRepresentable.swift
+    dependencies:
+      - package: PaperSaver
+        product: PaperSaverKit
+      - target: LichenExtension
+        embed: true
+
+  LichenExtension:
+    type: app-extension
+    platform: macOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen.Extension
+        PRODUCT_NAME: LichenExtension
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Resources/Extension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Extension/LichenExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/Extension/ScreenSaverPrivate.h
+        LD_RUNPATH_SEARCH_PATHS:
+          - "@executable_path/../Frameworks"
+          - "@executable_path/../../../../Frameworks"
+    sources:
+      - Sources/Lichen/LichenAnimator.swift
+      - Sources/Extension/LichenExtension.swift
+      - Sources/Extension/LichenViewController.swift
+      - Sources/Extension/LichenSaverView.swift
+      - Sources/Extension/ScreenSaverPrivate.h
+      - Resources/Extension/Assets.xcassets
+    dependencies:
+      - sdk: ScreenSaver.framework

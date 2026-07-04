@@ -1,10 +1,11 @@
 # lichen
 
 A macOS screensaver based on the MS-DOS virus
-["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). This library uses
-[ScreenSaverKit](https://github.com/fuzzywalrus/ScreenSaverKit) and a Metal kernel for
-GPU acceleration, allowing for extremely low power consumption while the screensaver
-plays.
+["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). Lichen ships as a
+modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, derived from
+the [AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) appex
+pattern. The simulation runs on the CPU and is drawn to the screen through Core
+Animation with nearest-neighbor upscaling.
 
 ![lichen](static/lichen_2x_2x_20fps_opt.gif)
 
@@ -45,10 +46,33 @@ while idx >= TOTAL_PIXELS:
     pixel_idx = esi & 0x000FFFFF
 ```
 
-## Developer Instructions
+## Requirements
 
-```bash
-cd Lichen
-# Build and open the image. May require sudo to install to /Library/Screen\ Savers
-../ScreenSaverKit/scripts/install-and-refresh.sh . && open -a ScreenSaverEngine
+- macOS 14 (Sonoma) or later
+- Xcode (with command-line tools)
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
+
+## Build & install
+
+```sh
+git clone https://github.com/janbridley/lichen.git
+cd lichen
+sh build-and-install.sh  # xcodegen -> build -> register appex -> launch
 ```
+
+The host app's window has **Install** and **Enable as Screensaver** buttons and an
+**Open Preview** window. After enabling, trigger it with `open -a ScreenSaverEngine`, or
+pick Lichen in **System Settings -> Screen Saver**.
+
+To install permanently, copy the built app into `/Applications` — macOS auto-discovers
+the embedded appex and Lichen appears in **System Settings -> Screen Saver**:
+
+```sh
+cp -R build/DerivedData/Build/Products/Release/Lichen.app /Applications/
+```
+
+## Developer Guide
+
+The actual simulation code for the screensaver is in
+`Sources/Lichen/LichenAnimator.swift`. All other files are either swiftui tie-ins or
+various build components.
