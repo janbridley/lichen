@@ -69,9 +69,16 @@ final class LichenAnimator {
 
     func start() {
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(withTimeInterval: LichenConfig.frameInterval, repeats: true) { [weak self] _ in
+        tick()   // render the first frame immediately
+        let t = Timer(timeInterval: LichenConfig.frameInterval, repeats: true) { [weak self] _ in
             self?.tick()
         }
+        // Register on .common so the timer fires in every run-loop mode. The
+        // ScreenSaverEngine host does not necessarily run the main run loop in
+        // .default; unlike a CABasicAnimation (interpolated by the render server)
+        // this animation needs a per-frame tick to update layer.contents.
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
     }
 
     func stop() {
