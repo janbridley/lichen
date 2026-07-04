@@ -2,6 +2,8 @@
 //  LichenViewController.swift
 //  LichenExtension
 //
+//  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
+//
 //  Main view controller for the screensaver. Specified as
 //  ScreenSaverViewControllerClass in Info.plist as
 //  `$(PRODUCT_MODULE_NAME).LichenViewController`. Only overrides the standard

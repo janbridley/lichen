@@ -2,6 +2,8 @@
 //  LichenSaverView.swift
 //  LichenExtension
 //
+//  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
+//
 //  ScreenSaverView that displays the lichen cellular automaton. The animation
 //  logic lives in LichenAnimator (shared with the host app's PreviewView).
 //

@@ -2,6 +2,8 @@
 //  PreviewView.swift
 //  Lichen
 //
+//  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
+//
 //  NSView that runs the same LichenAnimator the screensaver extension uses, so
 //  the host app's Preview window matches what the screensaver displays.
 //

@@ -2,6 +2,8 @@
 //  ScreenSaverPrivate.h
 //  LichenExtension
 //
+//  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
+//
 //  Private API declarations for macOS screensaver extensions.
 //  These classes exist in ScreenSaver.framework but are not publicly declared.
 //  Discovered via reverse engineering Apple's screensaver appex bundles.
