@@ -4,8 +4,14 @@
 //
 //  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
 //
-//  ScreenSaverView that displays the lichen cellular automaton. The animation
-//  logic lives in LichenAnimator (shared with the host app's PreviewView).
+//  ScreenSaverView that displays the lichen cellular automaton. Uses the
+//  traditional ScreenSaverView overrides (animateOneFrame + updateLayer) with
+//  SSENeedsAnimationTimer = true, so the ScreenSaverEngine framework drives the
+//  per-frame cadence itself. This is the reliable path for per-frame content in
+//  the appex host -- a self-driven Timer does not fire reliably there, and unlike
+//  a CABasicAnimation (render-server-interpolated) lichen needs a real tick each
+//  frame to rebuild layer.contents. The simulation + image build live in
+//  LichenAnimator (shared with the host app's PreviewView).
 //
 
 import ScreenSaver
@@ -26,53 +32,25 @@ final class LichenSaverView: ScreenSaverView {
         wantsLayer = true
     }
 
-    deinit {
-        animator.stop()
-    }
-
-    // MARK: - Layer Setup
+    // Layer-backed: AppKit calls updateLayer() instead of draw(_:) to repaint.
+    override var wantsUpdateLayer: Bool { true }
 
     override func makeBackingLayer() -> CALayer {
         let layer = CALayer()
         layer.backgroundColor = animator.currentBackgroundColor.cgColor
         layer.isOpaque = true
+        layer.magnificationFilter = .nearest   // chunky-pixel upscale to the display
+        layer.contentsGravity = .resize
         return layer
     }
 
-    // MARK: - ScreenSaverView Overrides
-    //
-    // We rely on viewDidMoveToWindow to start/stop the animator (robust across
-    // both ScreenSaverEngine and the System Settings preview), but the overrides
-    // remain so the framework can drive them if it wants to.
-
-    override func startAnimation() {
-        super.startAnimation()
-        animator.start()
+    // Called by the framework's animation timer (SSENeedsAnimationTimer = true).
+    override func animateOneFrame() {
+        animator.advance()
+        needsDisplay = true
     }
 
-    override func stopAnimation() {
-        animator.stop()
-        super.stopAnimation()
-    }
-
-    // MARK: - View Lifecycle
-
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-
-        if self.window != nil {
-            if let layer = self.layer {
-                animator.attach(to: layer)
-                animator.updateBounds(bounds)
-            }
-            animator.start()
-        } else {
-            animator.stop()
-        }
-    }
-
-    override func layout() {
-        super.layout()
-        animator.updateBounds(bounds)
+    override func updateLayer() {
+        layer?.contents = animator.makeImage()
     }
 }

@@ -32,7 +32,7 @@
 		<string>$(PRODUCT_MODULE_NAME).LichenExtension</string>
 	</dict>
 	<key>SSENeedsAnimationTimer</key>
-	<false/>
+	<true/>
 	<key>ScreenSaverViewControllerClass</key>
 	<string>$(PRODUCT_MODULE_NAME).LichenViewController</string>
 </dict>
