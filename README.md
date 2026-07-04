@@ -2,8 +2,8 @@
 
 A macOS screensaver based on the MS-DOS virus
 ["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). Lichen ships as a
-modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, built on the
-[AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) skeleton.
+modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, derived from the
+[AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) appex pattern.
 The simulation runs on the CPU and is drawn to the screen through Core Animation with
 nearest-neighbor upscaling.
 
@@ -55,27 +55,32 @@ while idx >= TOTAL_PIXELS:
 ## Build
 
 ```sh
-git clone --recurse-submodules https://github.com/janbridley/lichen.git
+git clone https://github.com/janbridley/lichen.git
 cd lichen
 xcodegen generate
 xcodebuild -project Lichen.xcodeproj -scheme Lichen -configuration Debug -derivedDataPath build/DerivedData build
 ```
 
-The build produces `Lichen.app` with the `LichenExtension.appex` screensaver embedded in
+Or open `Lichen.xcodeproj` in Xcode and build the **Lichen** scheme. The project is fully
+self-contained — no submodules, no SwiftPM dependencies, no network access required. The
+build produces `Lichen.app` with the `LichenExtension.appex` screensaver embedded in
 `Contents/PlugIns/`.
 
 ## Install
 
+The app's only window is a preview of the animation. To install the screensaver, copy the
+built app into `/Applications` — macOS auto-discovers the embedded appex and Lichen
+appears in **System Settings → Screen Saver**.
+
 ```sh
-open build/DerivedData/Build/Products/Debug/Lichen.app
-open -a ScreenSaverEngine
+cp -R build/DerivedData/Build/Products/Debug/Lichen.app /Applications/
+open -a ScreenSaverEngine      # or pick Lichen in System Settings → Screen Saver
 ```
 
-In the app window:
+During development (running straight from the build folder), register the extension
+manually and trigger it:
 
-1. **Install** — registers the screensaver extension with macOS.
-2. **Enable as Screensaver** — sets Lichen as the active screensaver.
-
-For a permanent install, copy `Lichen.app` to `/Applications` and run **Install** from
-there (the extension is registered by the app's path). **Open Preview** runs the
-animation in a window without changing your system screensaver.
+```sh
+pluginkit -a build/DerivedData/Build/Products/Debug/Lichen.app/Contents/PlugIns/LichenExtension.appex
+open -a ScreenSaverEngine
+```
