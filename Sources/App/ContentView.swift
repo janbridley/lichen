@@ -1,10 +1,8 @@
-//
 //  ContentView.swift
 //  Lichen
 //
 //  Minimal host UI: register the appex (Install) and activate it as the system
-//  screensaver (Enable, via PaperSaverKit). Kept small for testing activation.
-//
+//  screensaver (Enable, via PaperSaverKit).
 
 import SwiftUI
 
