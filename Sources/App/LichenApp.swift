@@ -1,10 +1,7 @@
-//
 //  LichenApp.swift
 //  Lichen
 //
-//  Host application. Embeds the LichenExtension.appex, provides a minimal
-//  install/enable UI, and a preview window.
-//
+//  Host application. Embeds the LichenExtension.appex with a minimal install UI.
 
 import SwiftUI
 

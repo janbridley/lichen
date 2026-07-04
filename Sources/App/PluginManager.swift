@@ -1,11 +1,7 @@
-//
 //  PluginManager.swift
 //  Lichen
 //
-//  Minimal install + activation helper. Restored (without logging) to test
-//  whether activating Lichen as the system screensaver via PaperSaverKit is
-//  what made it render at 4547c70 (vs. falling back to the Tahoe default).
-//
+//  Minimal install & activation helper.
 
 import Foundation
 import PaperSaverKit
@@ -28,7 +24,8 @@ final class PluginManager: ObservableObject {
     /// Register the embedded appex with macOS via pluginkit.
     func install() {
         guard let path = embeddedExtensionPath,
-              FileManager.default.fileExists(atPath: path) else {
+            FileManager.default.fileExists(atPath: path)
+        else {
             status = "Embedded appex not found in app bundle"
             return
         }
@@ -45,7 +42,8 @@ final class PluginManager: ObservableObject {
         do {
             try await paperSaver.setScreensaverEverywhere(module: moduleName)
             isActive = paperSaver.getActiveScreensavers().contains(moduleName)
-            status = isActive
+            status =
+                isActive
                 ? "Active — trigger with: open -a ScreenSaverEngine"
                 : "Enabled, but not detected as active"
         } catch {
