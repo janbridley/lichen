@@ -6,16 +6,14 @@
 //  (itself derived from the MS-DOS "lichen" program). A 320x200 grid of 8-bit
 //  brightness cells; each step an LCG picks one cell, dims it, and -- if it is
 //  still bright enough -- seeds its four Von Neumann neighbors. The grid is
-//  rendered to a grayscale CGImage for the host view to set as its layer
-//  `contents`; the layer's nearest-neighbor magnification upscales it to the
-//  display via the Core Animation compositor, exactly as the legacy .saver did.
-//  No Metal.
+//  rendered to a grayscale CGImage and set as the host CALayer's `contents`;
+//  the layer's nearest-neighbor magnification (configured in attach(to:))
+//  upscales it to the display via the Core Animation compositor, exactly as the
+//  legacy .saver did. No Metal.
 //
-//  Pure model + renderer: the owning view drives cadence (the screensaver via
-//  the framework animation timer with SSENeedsAnimationTimer = true; the preview
-//  via its own Timer) and calls advance() then makeImage() inside updateLayer().
-//  Exposes a small seam (currentBackgroundColor / advance / makeImage) that
-//  LichenSaverView (the appex) and PreviewView (the host app) drive.
+//  Exposes a small seam (currentBackgroundColor / attach / start / stop /
+//  updateBounds) that LichenSaverView (the appex) and PreviewView (the host
+//  app) drive. This is the mechanism that rendered correctly at 4547c70.
 
 import AppKit
 import QuartzCore
@@ -29,6 +27,7 @@ private enum LichenConfig {
     static let lcgConst: UInt32 = 0x5A6A6D6C
     static let lcgSeed: UInt32 = 0x00000361
     static let stepsPerFrame: Int = 4000
+    static let frameInterval: TimeInterval = 1.0 / 60.0
 }
 
 final class LichenAnimator {
@@ -39,10 +38,12 @@ final class LichenAnimator {
     private var esi: UInt32 = LichenConfig.lcgSeed
 
     // MARK: Rendering
+    private weak var parentLayer: CALayer?
+    private var timer: Timer?
     // Device gray matches the legacy NSDeviceWhiteColorSpace used by LichenView.m.
     private let colorSpace = CGColorSpaceCreateDeviceGray()
 
-    /// Used by the view's makeBackingLayer() to set the initial background color.
+    /// Used by the view's `makeBackingLayer()` to set the initial background color.
     var currentBackgroundColor: NSColor { .black }
 
     init() {
@@ -54,44 +55,38 @@ final class LichenAnimator {
         buffer[centerY * LichenConfig.width + centerX] = LichenConfig.maxBrightness
     }
 
-    /// Advance the simulation by `steps` stochastic single-pixel updates.
-    func advance(_ steps: Int = LichenConfig.stepsPerFrame) {
-        for _ in 0..<steps {
-            processOneStep()
+    func attach(to layer: CALayer) {
+        parentLayer = layer
+        layer.backgroundColor = NSColor.black.cgColor
+        layer.isOpaque = true
+        // Nearest-neighbor upscale to match the original low-res layout.
+        layer.magnificationFilter = .nearest
+        layer.contentsGravity = .resize
+    }
+
+    func start() {
+        guard timer == nil else { return }
+        timer = Timer.scheduledTimer(withTimeInterval: LichenConfig.frameInterval, repeats: true) { [weak self] _ in
+            self?.tick()
         }
     }
 
-    /// Build a 320x200 8-bit grayscale CGImage from the current simulation state.
-    func makeImage() -> CGImage? {
-        let maxValue = Int(LichenConfig.maxBrightness)
-        for i in 0..<LichenConfig.totalPixels {
-            let v = Int(buffer[i])
-            bitmapData[i] = v == 0 ? 0 : UInt8((v * 255) / maxValue)
-        }
+    func stop() {
+        timer?.invalidate()
+        timer = nil
+    }
 
-        let width = LichenConfig.width
-        let height = LichenConfig.height
+    func updateBounds(_ bounds: CGRect) {
+        // contentsGravity = .resize handles scaling; nothing else to do.
+    }
 
-        // NSData(bytes:length:) copies the bytes, so the returned CGImage owns
-        // its data independently of `bitmapData`.
-        return bitmapData.withUnsafeBufferPointer { ptr -> CGImage? in
-            guard let base = ptr.baseAddress else { return nil }
-            let data = NSData(bytes: base, length: bitmapData.count)
-            guard let provider = CGDataProvider(data: data) else { return nil }
-            return CGImage(
-                width: width,
-                height: height,
-                bitsPerComponent: 8,
-                bitsPerPixel: 8,
-                bytesPerRow: width,
-                space: colorSpace,
-                bitmapInfo: CGBitmapInfo(rawValue: 0),
-                provider: provider,
-                decode: nil,
-                shouldInterpolate: false,
-                intent: .defaultIntent
-            )
+    // MARK: Per-frame
+
+    private func tick() {
+        for _ in 0..<LichenConfig.stepsPerFrame {
+            processOneStep()
         }
+        parentLayer?.contents = currentImage()
     }
 
     /// One stochastic single-pixel update, faithful to LichenView.m.
@@ -130,5 +125,38 @@ final class LichenAnimator {
 
         let up = idx - width
         if up >= 0 && buffer[up] == 0 { buffer[up] = LichenConfig.maxBrightness }
+    }
+
+    /// Build a 320x200 8-bit grayscale CGImage from the simulation buffer.
+    private func currentImage() -> CGImage? {
+        let maxValue = Int(LichenConfig.maxBrightness)
+        for i in 0..<LichenConfig.totalPixels {
+            let v = Int(buffer[i])
+            bitmapData[i] = v == 0 ? 0 : UInt8((v * 255) / maxValue)
+        }
+
+        let width = LichenConfig.width
+        let height = LichenConfig.height
+
+        // NSData(bytes:length:) copies the bytes, so the returned CGImage owns
+        // its data independently of `bitmapData`.
+        return bitmapData.withUnsafeBufferPointer { ptr -> CGImage? in
+            guard let base = ptr.baseAddress else { return nil }
+            let data = NSData(bytes: base, length: bitmapData.count)
+            guard let provider = CGDataProvider(data: data) else { return nil }
+            return CGImage(
+                width: width,
+                height: height,
+                bitsPerComponent: 8,
+                bitsPerPixel: 8,
+                bytesPerRow: width,
+                space: colorSpace,
+                bitmapInfo: CGBitmapInfo(rawValue: 0),
+                provider: provider,
+                decode: nil,
+                shouldInterpolate: false,
+                intent: .defaultIntent
+            )
+        }
     }
 }
