@@ -6,8 +6,8 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
-# Most boilerplate is vendored in-tree (no submodule). PaperSaverKit is the one
-# SwiftPM dependency, used by the host app to activate the screensaver.
+# Most boilerplate is vendored in-tree from
+# https://github.com/AerialScreensaver/AppexSaverMinimal
 
 settings:
   base:
