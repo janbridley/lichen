@@ -29,15 +29,11 @@
 		<key>NSExtensionPointVersion</key>
 		<string>1.0</string>
 		<key>NSExtensionPrincipalClass</key>
-		<string>$(PRODUCT_MODULE_NAME).AppexSaverMinimalExtension</string>
+		<string>$(PRODUCT_MODULE_NAME).LichenExtension</string>
 	</dict>
-	<key>SSEHasConfigureSheet</key>
-	<true/>
 	<key>SSENeedsAnimationTimer</key>
 	<false/>
-	<key>ScreenSaverConfigurationSheetViewControllerClass</key>
-	<string>$(PRODUCT_MODULE_NAME).AppexSaverMinimalConfigurationViewController</string>
 	<key>ScreenSaverViewControllerClass</key>
-	<string>$(PRODUCT_MODULE_NAME).AppexSaverMinimalViewController</string>
+	<string>$(PRODUCT_MODULE_NAME).LichenViewController</string>
 </dict>
 </plist>

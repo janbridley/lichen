@@ -2,9 +2,8 @@
 //  PreviewView.swift
 //  Lichen
 //
-//  Lichen-owned override of AppexSaverMinimal's PreviewView: identical except it
-//  runs the LichenAnimator (the cellular automaton) instead of RainbowAnimator,
-//  so the host app's Preview window matches the screensaver.
+//  NSView that runs the same LichenAnimator the screensaver extension uses, so
+//  the host app's Preview window matches what the screensaver displays.
 //
 
 import AppKit

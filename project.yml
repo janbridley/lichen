@@ -6,8 +6,9 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
-# Most boilerplate is compiled directly from the AppexSaverMinimal submodule by
-# path (verbatim). Lichen owns only its overrides under Sources/Lichen and Resources/
+# Fully self-contained: no submodule, no SwiftPM dependencies. XcodeGen generates
+# Lichen.xcodeproj from this spec + Sources/ + Resources/.
+
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -19,11 +20,6 @@ settings:
     CODE_SIGN_IDENTITY: "-"
     ALWAYS_SEARCH_USER_PATHS: NO
 
-packages:
-  PaperSaver:
-    url: https://github.com/AerialScreensaver/PaperSaver.git
-    exactVersion: 0.2.0
-
 targets:
   Lichen:
     type: application
@@ -33,23 +29,15 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen
         PRODUCT_NAME: Lichen
         GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: AppexSaverMinimal/AppexSaverMinimal/Info.plist
-        CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimal.entitlements
+        INFOPLIST_FILE: Resources/App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/App/Lichen.entitlements
         LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
     sources:
-      # submodule-verbatim
-      - path: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimalApp.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/PreviewViewRepresentable.swift
-      # lichen-owned overrides
-      - path: Sources/Lichen/Host/ContentView.swift
-      - path: Sources/Lichen/Host/PluginManager.swift
-      - path: Sources/Lichen/Host/PreviewView.swift
-      # lichen-owned shared (also in the extension target)
-      - path: Sources/Lichen/LichenAnimator.swift
-      - path: Sources/Lichen/Shared/Logger.swift
+      - Sources/Lichen/LichenAnimator.swift
+      - Sources/App/LichenApp.swift
+      - Sources/App/PreviewView.swift
+      - Sources/App/PreviewViewRepresentable.swift
     dependencies:
-      - package: PaperSaver
-        product: PaperSaverKit
       - target: LichenExtension
         embed: true
 
@@ -61,24 +49,19 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen.Extension
         PRODUCT_NAME: LichenExtension
         GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: Resources/Lichen.appex/Info.plist
-        CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.entitlements
-        SWIFT_OBJC_BRIDGING_HEADER: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
+        INFOPLIST_FILE: Resources/Extension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/Extension/LichenExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/Extension/LichenExtension-Bridging-Header.h
         LD_RUNPATH_SEARCH_PATHS:
           - "@executable_path/../Frameworks"
           - "@executable_path/../../../../Frameworks"
     sources:
-      # submodule-verbatim
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.swift
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalViewController.swift
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalConfigurationViewController.swift
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/PrivateHeaders/ScreenSaverPrivate.h
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/Assets.xcassets
-      # lichen-owned overrides
-      - path: Sources/Lichen/Host/AppexSaverMinimalView.swift
-      # lichen-owned shared (also in the app target)
-      - path: Sources/Lichen/LichenAnimator.swift
-      - path: Sources/Lichen/Shared/Logger.swift
+      - Sources/Lichen/LichenAnimator.swift
+      - Sources/Extension/LichenExtension.swift
+      - Sources/Extension/LichenViewController.swift
+      - Sources/Extension/LichenSaverView.swift
+      - Sources/Extension/LichenExtension-Bridging-Header.h
+      - Sources/Extension/ScreenSaverPrivate.h
+      - Resources/Extension/Assets.xcassets
     dependencies:
       - sdk: ScreenSaver.framework
