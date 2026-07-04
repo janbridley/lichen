@@ -64,8 +64,12 @@ The host app's window has **Install** and **Enable as Screensaver** buttons and 
 **Open Preview** window. After enabling, trigger it with `open -a ScreenSaverEngine`, or
 pick Lichen in **System Settings -> Screen Saver**.
 
+|                 Install Pane                  |                Screensaver Enabled                |               Screensaver Active               |
+| :-------------------------------------------: | :-----------------------------------------------: | :--------------------------------------------: |
+| <img src="static/ims/ready.png" width="100%"> | <img src="static/ims/installed.png" width="100%"> | <img src="static/ims/active.png" width="100%"> |
+
 To install permanently, copy the built app into `/Applications` — macOS auto-discovers
-the embedded appex and Lichen appears in **System Settings → Screen Saver**:
+the embedded appex and Lichen appears in **System Settings -> Screen Saver**:
 
 ```sh
 cp -R build/DerivedData/Build/Products/Release/Lichen.app /Applications/
