@@ -11,9 +11,9 @@
 //  upscales it to the display via the Core Animation compositor, exactly as the
 //  legacy .saver did. No Metal.
 //
-//  Exposes the same seam as AppexSaverMinimal's RainbowAnimator
-//  (currentBackgroundColor / attach / start / stop / updateBounds) so the
-//  lichen-owned AppexSaverMinimalView and PreviewView use it as a drop-in.
+//  Exposes a small seam (currentBackgroundColor / attach / start / stop /
+//  updateBounds) that LichenSaverView (the appex) and PreviewView (the host
+//  app) drive.
 //
 
 import AppKit
