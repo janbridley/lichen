@@ -1,10 +1,11 @@
 # lichen
 
 A macOS screensaver based on the MS-DOS virus
-["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). This library uses
-[ScreenSaverKit](https://github.com/fuzzywalrus/ScreenSaverKit) and a Metal kernel for
-GPU acceleration, allowing for extremely low power consumption while the screensaver
-plays.
+["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). Lichen ships as a
+modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, built on the
+[AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) skeleton.
+The simulation runs on the CPU and is drawn to the screen through Core Animation with
+nearest-neighbor upscaling.
 
 ![lichen](static/lichen_2x_2x_20fps_opt.gif)
 
@@ -45,10 +46,36 @@ while idx >= TOTAL_PIXELS:
     pixel_idx = esi & 0x000FFFFF
 ```
 
-## Developer Instructions
+## Requirements
 
-```bash
-cd Lichen
-# Build and open the image. May require sudo to install to /Library/Screen\ Savers
-../ScreenSaverKit/scripts/install-and-refresh.sh . && open -a ScreenSaverEngine
+- macOS 14 (Sonoma) or later
+- Xcode (with command-line tools)
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
+
+## Build
+
+```sh
+git clone --recurse-submodules https://github.com/janbridley/lichen.git
+cd lichen
+xcodegen generate
+xcodebuild -project Lichen.xcodeproj -scheme Lichen -configuration Debug -derivedDataPath build/DerivedData build
 ```
+
+The build produces `Lichen.app` with the `LichenExtension.appex` screensaver embedded in
+`Contents/PlugIns/`.
+
+## Install
+
+```sh
+open build/DerivedData/Build/Products/Debug/Lichen.app
+open -a ScreenSaverEngine
+```
+
+In the app window:
+
+1. **Install** — registers the screensaver extension with macOS.
+2. **Enable as Screensaver** — sets Lichen as the active screensaver.
+
+For a permanent install, copy `Lichen.app` to `/Applications` and run **Install** from
+there (the extension is registered by the app's path). **Open Preview** runs the
+animation in a window without changing your system screensaver.
