@@ -1,3 +1,6 @@
 [submodule "ScreenSaverKit"]
 	path = ScreenSaverKit
 	url = https://github.com/fuzzywalrus/ScreenSaverKit.git
+[submodule "AppexSaverMinimal"]
+	path = AppexSaverMinimal
+	url = git@github.com:AerialScreensaver/AppexSaverMinimal.git
