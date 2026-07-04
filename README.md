@@ -70,3 +70,9 @@ the embedded appex and Lichen appears in **System Settings → Screen Saver**:
 ```sh
 cp -R build/DerivedData/Build/Products/Release/Lichen.app /Applications/
 ```
+
+## Developer Guide
+
+The actual simulation code for the screensaver is in
+`Sources/Lichen/LichenAnimator.swift`. All other files are either swiftui tie-ins or
+various build components.
