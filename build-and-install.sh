@@ -33,7 +33,8 @@ rm -rf "$DERIVED"
 
 echo "==> Build ($CONFIG)"
 xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
-    -derivedDataPath "$DERIVED" -quiet build
+    -derivedDataPath "$DERIVED" -destination "platform=macOS,arch=arm64" \
+    -quiet build
 
 echo "==> Register the freshly built appex"
 pluginkit -a "$APPEX"
