@@ -1,0 +1,79 @@
+name: Lichen
+options:
+  bundleIdPrefix: com.janbridley
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+# All boilerplate (Swift sources, Info.plists, entitlements, assets) is compiled
+# directly from the AppexSaverMinimal submodule by path. Lichen owns only its
+# overrides (added in later phases). See plans/read-this-repo-and-kind-hollerith.md.
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    DEVELOPMENT_LANGUAGE: en
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.0"
+    CODE_SIGN_STYLE: Automatic
+    CODE_SIGN_IDENTITY: "-"
+    ALWAYS_SEARCH_USER_PATHS: NO
+
+packages:
+  PaperSaver:
+    url: https://github.com/AerialScreensaver/PaperSaver.git
+    exactVersion: 0.2.0
+
+targets:
+  Lichen:
+    type: application
+    platform: macOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen
+        PRODUCT_NAME: Lichen
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: AppexSaverMinimal/AppexSaverMinimal/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimal.entitlements
+        LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
+    sources:
+      - path: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimalApp.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/ContentView.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/PluginManager.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/PreviewView.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/PreviewViewRepresentable.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/RainbowAnimator.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/Helpers/Logger.swift
+    dependencies:
+      - package: PaperSaver
+        product: PaperSaverKit
+      - target: LichenExtension
+        embed: true
+
+  LichenExtension:
+    type: app-extension
+    platform: macOS
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen.Extension
+        PRODUCT_NAME: LichenExtension
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: AppexSaverMinimal/AppexSaverMinimalExtension/Info.plist
+        CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.entitlements
+        SWIFT_OBJC_BRIDGING_HEADER: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
+        LD_RUNPATH_SEARCH_PATHS:
+          - "@executable_path/../Frameworks"
+          - "@executable_path/../../../../Frameworks"
+    sources:
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.swift
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalViewController.swift
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalView.swift
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalConfigurationViewController.swift
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/PrivateHeaders/ScreenSaverPrivate.h
+      - path: AppexSaverMinimal/AppexSaverMinimal/RainbowAnimator.swift
+      - path: AppexSaverMinimal/AppexSaverMinimal/Helpers/Logger.swift
+      - path: AppexSaverMinimal/AppexSaverMinimalExtension/Assets.xcassets
+    dependencies:
+      - sdk: ScreenSaver.framework
