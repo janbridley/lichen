@@ -6,9 +6,8 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
-# All boilerplate (Swift sources, Info.plists, entitlements, assets) is compiled
-# directly from the AppexSaverMinimal submodule by path. Lichen owns only its
-# overrides (added in later phases). See plans/read-this-repo-and-kind-hollerith.md.
+# Most boilerplate is compiled directly from the AppexSaverMinimal submodule by
+# path (verbatim). Lichen owns only its overrides under Sources/Lichen and Resources/
 settings:
   base:
     SWIFT_VERSION: "5.9"
@@ -38,13 +37,16 @@ targets:
         CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimal.entitlements
         LD_RUNPATH_SEARCH_PATHS: "@executable_path/../Frameworks"
     sources:
+      # submodule-verbatim
       - path: AppexSaverMinimal/AppexSaverMinimal/AppexSaverMinimalApp.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/ContentView.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/PluginManager.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/PreviewView.swift
       - path: AppexSaverMinimal/AppexSaverMinimal/PreviewViewRepresentable.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/RainbowAnimator.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/Helpers/Logger.swift
+      # lichen-owned overrides
+      - path: Sources/Lichen/Host/ContentView.swift
+      - path: Sources/Lichen/Host/PluginManager.swift
+      - path: Sources/Lichen/Host/PreviewView.swift
+      # lichen-owned shared (also in the extension target)
+      - path: Sources/Lichen/LichenAnimator.swift
+      - path: Sources/Lichen/Shared/Logger.swift
     dependencies:
       - package: PaperSaver
         product: PaperSaverKit
@@ -59,21 +61,24 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.janbridley.lichen.Extension
         PRODUCT_NAME: LichenExtension
         GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: AppexSaverMinimal/AppexSaverMinimalExtension/Info.plist
+        INFOPLIST_FILE: Resources/Lichen.appex/Info.plist
         CODE_SIGN_ENTITLEMENTS: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.entitlements
         SWIFT_OBJC_BRIDGING_HEADER: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
         LD_RUNPATH_SEARCH_PATHS:
           - "@executable_path/../Frameworks"
           - "@executable_path/../../../../Frameworks"
     sources:
+      # submodule-verbatim
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension.swift
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalViewController.swift
-      - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalView.swift
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalConfigurationViewController.swift
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/AppexSaverMinimalExtension-Bridging-Header.h
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/PrivateHeaders/ScreenSaverPrivate.h
-      - path: AppexSaverMinimal/AppexSaverMinimal/RainbowAnimator.swift
-      - path: AppexSaverMinimal/AppexSaverMinimal/Helpers/Logger.swift
       - path: AppexSaverMinimal/AppexSaverMinimalExtension/Assets.xcassets
+      # lichen-owned overrides
+      - path: Sources/Lichen/Host/AppexSaverMinimalView.swift
+      # lichen-owned shared (also in the app target)
+      - path: Sources/Lichen/LichenAnimator.swift
+      - path: Sources/Lichen/Shared/Logger.swift
     dependencies:
       - sdk: ScreenSaver.framework
