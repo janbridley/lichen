@@ -2,11 +2,8 @@
 //  LichenApp.swift
 //  Lichen
 //
-//  Vendored from AppexSaverMinimal (https://github.com/AerialScreensaver/AppexSaverMinimal).
-//
-//  Host application. Its only job is to embed the LichenExtension.appex (so macOS
-//  can discover the screensaver) and show a preview window. Drop Lichen.app into
-//  /Applications and the screensaver appears in System Settings automatically.
+//  Host application. Embeds the LichenExtension.appex, provides a minimal
+//  install/enable UI, and a preview window.
 //
 
 import SwiftUI
@@ -15,6 +12,10 @@ import SwiftUI
 struct LichenApp: App {
     var body: some Scene {
         WindowGroup {
+            ContentView()
+        }
+
+        Window("Preview", id: "preview") {
             PreviewViewRepresentable()
                 .ignoresSafeArea()
         }

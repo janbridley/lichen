@@ -6,8 +6,8 @@ options:
   createIntermediateGroups: true
   groupSortPosition: top
 
-# Fully self-contained: no submodule, no SwiftPM dependencies. XcodeGen generates
-# Lichen.xcodeproj from this spec + Sources/ + Resources/.
+# Most boilerplate is vendored in-tree (no submodule). PaperSaverKit is the one
+# SwiftPM dependency, used by the host app to activate the screensaver.
 
 settings:
   base:
@@ -19,6 +19,11 @@ settings:
     CODE_SIGN_STYLE: Automatic
     CODE_SIGN_IDENTITY: "-"
     ALWAYS_SEARCH_USER_PATHS: NO
+
+packages:
+  PaperSaver:
+    url: https://github.com/AerialScreensaver/PaperSaver.git
+    exactVersion: 0.2.0
 
 targets:
   Lichen:
@@ -35,9 +40,13 @@ targets:
     sources:
       - Sources/Lichen/LichenAnimator.swift
       - Sources/App/LichenApp.swift
+      - Sources/App/ContentView.swift
+      - Sources/App/PluginManager.swift
       - Sources/App/PreviewView.swift
       - Sources/App/PreviewViewRepresentable.swift
     dependencies:
+      - package: PaperSaver
+        product: PaperSaverKit
       - target: LichenExtension
         embed: true
 
