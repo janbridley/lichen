@@ -60,7 +60,7 @@ targets:
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Resources/Extension/Info.plist
         CODE_SIGN_ENTITLEMENTS: Resources/Extension/LichenExtension.entitlements
-        SWIFT_OBJC_BRIDGING_HEADER: Sources/Extension/LichenExtension-Bridging-Header.h
+        SWIFT_OBJC_BRIDGING_HEADER: Sources/Extension/ScreenSaverPrivate.h
         LD_RUNPATH_SEARCH_PATHS:
           - "@executable_path/../Frameworks"
           - "@executable_path/../../../../Frameworks"
@@ -69,7 +69,6 @@ targets:
       - Sources/Extension/LichenExtension.swift
       - Sources/Extension/LichenViewController.swift
       - Sources/Extension/LichenSaverView.swift
-      - Sources/Extension/LichenExtension-Bridging-Header.h
       - Sources/Extension/ScreenSaverPrivate.h
       - Resources/Extension/Assets.xcassets
     dependencies:
