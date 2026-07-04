@@ -2,10 +2,10 @@
 
 A macOS screensaver based on the MS-DOS virus
 ["lichen"](https://archive.org/details/virus-dos-lichen-1024-example). Lichen ships as a
-modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, derived from the
-[AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) appex pattern.
-The simulation runs on the CPU and is drawn to the screen through Core Animation with
-nearest-neighbor upscaling.
+modern app-extension (appex) screensaver for macOS 14 (Sonoma) and later, derived from
+the [AppexSaverMinimal](https://github.com/AerialScreensaver/AppexSaverMinimal) appex
+pattern. The simulation runs on the CPU and is drawn to the screen through Core
+Animation with nearest-neighbor upscaling.
 
 ![lichen](static/lichen_2x_2x_20fps_opt.gif)
 
@@ -52,35 +52,21 @@ while idx >= TOTAL_PIXELS:
 - Xcode (with command-line tools)
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
 
-## Build
+## Build & install
 
 ```sh
 git clone https://github.com/janbridley/lichen.git
 cd lichen
-xcodegen generate
-xcodebuild -project Lichen.xcodeproj -scheme Lichen -configuration Debug -derivedDataPath build/DerivedData build
+sh build-and-install.sh  # xcodegen -> build -> register appex -> launch
 ```
 
-Or open `Lichen.xcodeproj` in Xcode and build the **Lichen** scheme. The project is fully
-self-contained — no submodules, no SwiftPM dependencies, no network access required. The
-build produces `Lichen.app` with the `LichenExtension.appex` screensaver embedded in
-`Contents/PlugIns/`.
+The host app's window has **Install** and **Enable as Screensaver** buttons and an
+**Open Preview** window. After enabling, trigger it with `open -a ScreenSaverEngine`, or
+pick Lichen in **System Settings -> Screen Saver**.
 
-## Install
-
-The app's only window is a preview of the animation. To install the screensaver, copy the
-built app into `/Applications` — macOS auto-discovers the embedded appex and Lichen
-appears in **System Settings → Screen Saver**.
+To install permanently, copy the built app into `/Applications` — macOS auto-discovers
+the embedded appex and Lichen appears in **System Settings → Screen Saver**:
 
 ```sh
-cp -R build/DerivedData/Build/Products/Debug/Lichen.app /Applications/
-open -a ScreenSaverEngine      # or pick Lichen in System Settings → Screen Saver
-```
-
-During development (running straight from the build folder), register the extension
-manually and trigger it:
-
-```sh
-pluginkit -a build/DerivedData/Build/Products/Debug/Lichen.app/Contents/PlugIns/LichenExtension.appex
-open -a ScreenSaverEngine
+cp -R build/DerivedData/Build/Products/Release/Lichen.app /Applications/
 ```
