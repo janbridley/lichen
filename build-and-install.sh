@@ -14,17 +14,27 @@ DERIVED=build/DerivedData
 APP="$DERIVED/Build/Products/Debug/Lichen.app"
 APPEX="$APP/Contents/PlugIns/LichenExtension.appex"
 
+echo "==> Stop any running Lichen instances"
+killall Lichen 2>/dev/null || true
+
+echo "==> Unregister every previously-registered Lichen appex (kills stale builds)"
+pluginkit -m -v -p com.apple.screensaver 2>/dev/null | grep -i lichen \
+    | grep -o '/[^ ]*\.appex' | sort -u | while read -r old; do
+    echo "  - $old"
+    pluginkit -r "$old" 2>/dev/null || true
+done
+
 echo "==> Regenerate the Xcode project (xcodegen)"
 xcodegen generate
+
+echo "==> Clean build dir (avoids stale appex being registered)"
+rm -rf "$DERIVED"
 
 echo "==> Build (Debug)"
 xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
     -derivedDataPath "$DERIVED" -quiet build
 
-echo "==> Stop any running Lichen instances"
-killall Lichen 2>/dev/null || true
-
-echo "==> Register the appex with macOS (pluginkit)"
+echo "==> Register the freshly built appex"
 pluginkit -a "$APPEX"
 
 echo "==> Launch the host app"

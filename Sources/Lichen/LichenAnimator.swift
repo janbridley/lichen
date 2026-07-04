@@ -13,7 +13,7 @@
 //
 //  Exposes a small seam (currentBackgroundColor / attach / start / stop /
 //  updateBounds) that LichenSaverView (the appex) and PreviewView (the host
-//  app) drive. This is the mechanism that rendered correctly at 4547c70.
+//  app) drive.
 
 import AppKit
 import QuartzCore
@@ -62,13 +62,21 @@ final class LichenAnimator {
         // Nearest-neighbor upscale to match the original low-res layout.
         layer.magnificationFilter = .nearest
         layer.contentsGravity = .resize
+        // Paint the first frame immediately so something is visible even if the
+        // host never fires the per-frame Timer.
+        layer.contents = currentImage()
     }
 
     func start() {
         guard timer == nil else { return }
-        timer = Timer.scheduledTimer(withTimeInterval: LichenConfig.frameInterval, repeats: true) { [weak self] _ in
+        let t = Timer(timeInterval: LichenConfig.frameInterval, repeats: true) { [weak self] _ in
             self?.tick()
         }
+        // .common so the timer fires in every run-loop mode (the ScreenSaverEngine
+        // host does not necessarily run the main run loop in .default).
+        RunLoop.main.add(t, forMode: .common)
+        timer = t
+        tick()   // render the first frame immediately
     }
 
     func stop() {
