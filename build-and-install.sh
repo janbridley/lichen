@@ -11,7 +11,8 @@ cd "$(dirname "$0")"
 PROJECT=Lichen.xcodeproj
 SCHEME=Lichen
 DERIVED=build/DerivedData
-APP="$DERIVED/Build/Products/Debug/Lichen.app"
+CONFIG=${1:-Release}   # sh build-and-install.sh [Debug|Release]
+APP="$DERIVED/Build/Products/$CONFIG/Lichen.app"
 APPEX="$APP/Contents/PlugIns/LichenExtension.appex"
 
 echo "==> Stop any running Lichen instances"
@@ -30,8 +31,8 @@ xcodegen generate
 echo "==> Clean build dir (avoids stale appex being registered)"
 rm -rf "$DERIVED"
 
-echo "==> Build (Debug)"
-xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration Debug \
+echo "==> Build ($CONFIG)"
+xcodebuild -project "$PROJECT" -scheme "$SCHEME" -configuration "$CONFIG" \
     -derivedDataPath "$DERIVED" -quiet build
 
 echo "==> Register the freshly built appex"
